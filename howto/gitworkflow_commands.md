@@ -26,3 +26,7 @@ syncronize a branch xyz with currect version of main:
 - git switch xyz
 - git fetch origin
 - git merge origin/main
+
+tag the codebase
+- git tag -a v1.0 -m "some comments --> official version of buildroot code" 
+- git push origin v1.0
