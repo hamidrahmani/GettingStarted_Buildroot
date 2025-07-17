@@ -3,10 +3,11 @@ This is a repository to host a buildroot with my own application in order to pla
 
 
 Note: dont forget to create / doublecheck the ssh-key
+- create the keys if not already availabe 
     - ssh-keygen -t ed25519 -C "deine-email@example.com"
-    - copy the .pub key in your github under ssh-key
-    - test your access
-        - ssh -T git@github.com
+- copy the .pub key in your github under ssh-key
+- test your access
+    - ssh -T git@github.com
 
 steps done so far:
 - donwload the zip file from https://github.com/buildroot/buildroot 
