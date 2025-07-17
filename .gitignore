@@ -1,0 +1,35 @@
+# Ignore build artifacts
+*.o
+*.out
+*.exe
+*.log
+
+# Buildroot output directory
+output/
+
+# Downloaded source archives
+dl/
+
+# Build artifacts
+build/
+host/
+images/
+staging/
+target/
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# VS Code settings
+.vscode/
+
+# Logs and debug files
+*.log
+*.bak
+
+# QEMU runtime files
+qemu-*.img
+qemu-*.log
+qemu-*.pid
