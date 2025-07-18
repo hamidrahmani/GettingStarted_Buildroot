@@ -19,8 +19,10 @@ jobs:
 
       - name: Build with Buildroot
         run: |
-         # make versatilepb_defconfig
+         # make versatilepb_defconfig 
           cd buildroot-master_from-github/
+         # make versatile_deficonfig
+          make qemu_arm_versatile_defconfig
           make
 
       - name: Prepare release files
