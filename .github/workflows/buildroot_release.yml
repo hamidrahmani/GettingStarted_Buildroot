@@ -16,11 +16,11 @@ jobs:
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential
+        
       - name: Build with Buildroot
         run: |
           cd buildroot-master_from-github/
          # make versatilepb_defconfig
-          make menuconfig
           make
 
       - name: Prepare release files
