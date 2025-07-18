@@ -1,0 +1,49 @@
+name: Buildroot Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build Buildroot Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Build with Buildroot
+        run: |
+         # make versatilepb_defconfig
+          cd buildroot-master_from-github/
+          make
+
+      - name: Prepare release files
+        run: |
+          mkdir -p dist
+          cp output/images/zImage dist/
+          cp output/images/rootfs.ext2 dist/
+          cp output/images/versatile-pb.dtb dist/
+          cp start-qemu.sh dist/
+
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum * > checksums.sha256
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/zImage
+            dist/rootfs.ext2
+            dist/versatile-pb.dtb
+            dist/start-qemu.sh
+            dist/checksums.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
