@@ -28,10 +28,10 @@ jobs:
       - name: Prepare release files
         run: |
           mkdir -p dist
-          cp output/images/zImage dist/
-          cp output/images/rootfs.ext2 dist/
-          cp output/images/versatile-pb.dtb dist/
-          cp start-qemu.sh dist/
+          cp buildroot-master_from-github/output/images/zImage dist/
+          cp buildroot-master_from-github/output/images/rootfs.ext2 dist/
+          cp buildroot-master_from-github/output/images/versatile-pb.dtb dist/
+          cp buildroot-master_from-github/output/images/start-qemu.sh dist/
 
       - name: Generate checksums
         run: |
