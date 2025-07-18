@@ -30,3 +30,7 @@ syncronize a branch xyz with currect version of main:
 tag the codebase
 - git tag -a v1.0 -m "some comments --> official version of buildroot code" 
 - git push origin v1.0
+
+start the workflow for failed tag
+- git tag -d v1.0.0
+- git push origin :refs/tags/v1.0.0
