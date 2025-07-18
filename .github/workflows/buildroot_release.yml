@@ -20,8 +20,6 @@ jobs:
       - name: Build with Buildroot
         run: |
           cd buildroot-master_from-github/
-         # make versatilepb_defconfig
-          make
 
       - name: Prepare release files
         run: |
