@@ -1,0 +1,5 @@
+config BR2_PACKAGE_GREETING2
+	bool "greeting2"
+	help
+  	  simple hello program from Buildroot.
+
