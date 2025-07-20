@@ -20,11 +20,12 @@ Note: after the build process there shold be 4 files under /output/image/  --> r
         - mkdir package/userApps
     - register the application package in buildroot
         - nano package/Config.in
-    - configure your application as buildroot package. This will happen inside the Config.in file 
+    - configure your application as buildroot package and also building all .mk files insode userApps
         - nano package/userApps/Config.in
+        - nano package/userApps/userApps.mk
     - instruct buildroot to build and install the application into target filesystem
         - nano package/userApps/userApps.mk
-    - select the application package to be a activated in .config file
+    - select the application package in GUI to be a activated in .config file
         - make menucondig
     - build the image
         - make
