@@ -1,0 +1,55 @@
+name: Buildroot Release
+
+on:
+  push:
+    tags:
+      - 'bv*'
+
+permissions:
+  contents: write  # Required for creating releases
+
+jobs:
+  build:
+    name: Build Buildroot Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Build with Buildroot
+        run: |
+         # make versatilepb_defconfig 
+          cd buildroot-master_from-github/
+         # make versatile_deficonfig
+          make beaglebone_defconfig
+          make
+
+      - name: Prepare release files
+        run: |
+          mkdir -p dist
+          cp buildroot-master_from-github/output/images/zImage dist/
+          cp buildroot-master_from-github/output/images/rootfs.ext4 dist/
+          cp buildroot-master_from-github/output/images/am335x-bone.dtb dist/
+          # cp buildroot-master_from-github/output/images/start-qemu.sh dist/  # Not used for BeagleBone Black
+
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum * > checksums.sha256
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/zImage
+            dist/rootfs.ext4
+            dist/am335x-bone.dtb
+            # dist/start-qemu.sh  # Not used for BeagleBone Black
+            dist/checksums.sha256
+        env:
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Use a PAT with repo permissions

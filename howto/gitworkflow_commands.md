@@ -34,3 +34,15 @@ tag the codebase
 start the workflow for failed tag
 - git tag -d v1.0.0
 - git push origin :refs/tags/v1.0.0
+
+good practise:
+- everyday synchronise the local main with the origin
+    - git switch main
+    - git pull origin main
+- switch to your working branch
+    - git switch <branch>
+    - git merge main #local branch is up to main
+
+delete a branch
+- local --> git branch -d <branch>
+- remote on origin --> git push origin --delete <branch>
