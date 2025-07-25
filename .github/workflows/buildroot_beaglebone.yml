@@ -20,12 +20,20 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential
 
+      - name: Configure Buildroot with U-Boot
+        run: |
+          cd buildroot-master_from-github/
+          make beaglebone_defconfig
+          echo 'BR2_TARGET_UBOOT=y' >> .config
+          echo 'BR2_TARGET_UBOOT_BOARD_DEFCONFIG="am335x_evm"' >> .config
+          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION=y' >> .config
+          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2023.10"' >> .config
+          echo 'BR2_TARGET_UBOOT_FORMAT_IMG=y' >> .config
+          make olddefconfig
+
       - name: Build with Buildroot
         run: |
-         # make versatilepb_defconfig 
           cd buildroot-master_from-github/
-         # make versatile_deficonfig
-          make beaglebone_defconfig
           make
 
       - name: Prepare release files
@@ -34,7 +42,8 @@ jobs:
           cp buildroot-master_from-github/output/images/zImage dist/
           cp buildroot-master_from-github/output/images/rootfs.ext4 dist/
           cp buildroot-master_from-github/output/images/am335x-bone.dtb dist/
-          # cp buildroot-master_from-github/output/images/start-qemu.sh dist/  # Not used for BeagleBone Black
+          cp buildroot-master_from-github/output/images/MLO dist/
+          cp buildroot-master_from-github/output/images/u-boot.img dist/
 
       - name: Generate checksums
         run: |
@@ -48,8 +57,8 @@ jobs:
             dist/zImage
             dist/rootfs.ext4
             dist/am335x-bone.dtb
-            # dist/start-qemu.sh  # Not used for BeagleBone Black
+            dist/MLO
+            dist/u-boot.img
             dist/checksums.sha256
         env:
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Use a PAT with repo permissions
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
