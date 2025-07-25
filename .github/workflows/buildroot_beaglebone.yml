@@ -26,10 +26,10 @@ jobs:
           make beaglebone_defconfig
           echo 'BR2_TARGET_UBOOT=y' >> .config
           echo 'BR2_TARGET_UBOOT_BOARD_DEFCONFIG="am335x_evm"' >> .config
-          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION=y' >> .config
-          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2023.10"' >> .config
-          echo 'BR2_TARGET_UBOOT_FORMAT_IMG=y' >> .config
-          echo 'make BR2_IGNORE_HASH_ERRORS=y' >> .config
+          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION=y' >> .config #
+          #echo 'BR2_TARGET_VERSION="2025.07"' >> .config
+          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2025.07"' >> .config #
+          echo 'BR2_TARGET_UBOOT_FORMAT_IMG=y' >> .config #
           make olddefconfig
 
       - name: Build with Buildroot
