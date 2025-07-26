@@ -35,7 +35,7 @@ jobs:
           echo 'BR2_TARGET_ROOTFS_TAR=y' >> .config
           ### activate custom package
           echo 'BR2_PACKAGE_GREETING=y' >> .config
-          echo 'BR2_PACKAGE_LOG=y' >> .config
+          echo 'BR2_PACKAGE_GREETING2=y' >> .config
           make olddefconfig
 
       - name: Build with Buildroot
