@@ -5,7 +5,7 @@
 ################################################################################
 
 GREETING_VERSION = 1.0
-GREETING_SITE = $(CURDIR)/src
+GREETING_SITE = $(CURDIR)/package/userApps/greeting/src
 GREETING_SITE_METHOD = local
 define GREETING_BUILD_CMDS
 	$(MAKE) CROSS_COMPILE=$(TARGET_CROSS) -C $(@D)
