@@ -24,12 +24,18 @@ jobs:
         run: |
           cd buildroot-master_from-github/
           make beaglebone_defconfig
+
+          ### activate uboot
           echo 'BR2_TARGET_UBOOT=y' >> .config
           echo 'BR2_TARGET_UBOOT_BOARD_DEFCONFIG="am335x_evm"' >> .config
-          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION=y' >> .config #
-          #echo 'BR2_TARGET_VERSION="2025.07"' >> .config
-          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2025.07"' >> .config #
-          echo 'BR2_TARGET_UBOOT_FORMAT_IMG=y' >> .config #
+          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION=y' >> .config 
+          echo 'BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2025.07"' >> .config 
+          echo 'BR2_TARGET_UBOOT_FORMAT_IMG=y' >> .config 
+          ### activate rootfs tar
+          echo 'BR2_TARGET_ROOTFS_TAR=y' >> .config
+          ### activate custom package
+          echo 'BR2_PACKAGE_GREETING=y' >> .config
+          echo 'BR2_PACKAGE_LOG=y' >> .config
           make olddefconfig
 
       - name: Build with Buildroot
@@ -42,6 +48,7 @@ jobs:
           mkdir -p dist
           cp buildroot-master_from-github/output/images/zImage dist/
           cp buildroot-master_from-github/output/images/rootfs.ext4 dist/
+          cp buildroot-master_from-github/output/images/rootfs.tar dist/
           cp buildroot-master_from-github/output/images/am335x-bone.dtb dist/
           cp buildroot-master_from-github/output/images/MLO dist/
           cp buildroot-master_from-github/output/images/u-boot.img dist/
@@ -57,6 +64,7 @@ jobs:
           files: |
             dist/zImage
             dist/rootfs.ext4
+            dist/rootfs.tar
             dist/am335x-bone.dtb
             dist/MLO
             dist/u-boot.img
