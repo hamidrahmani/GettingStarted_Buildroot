@@ -1,0 +1,13 @@
+steps to try out:
+
+1. create an default image with buildroot ---> done
+2. run image on bbb --> done
+3. create an image with custom application with buildroot --> done
+4. run image on qemu --> done
+5. set up and run CI/CD to build, test and upload the binary into server 
+    - github-releases --> usage of .yml files as automating scripts for running the the coomands on github-action --> done
+    - artifactory from JFORG instead of github-releases
+6. setup and run a minimal webserver to run a simple application 
+7. replace the init-system with systemd
+8. config, manipulate and run a webserver on buildroot over init-system and also over systemd
+9. activate ssh on bbb to connecting to the board over ssh and not FTDI-TTL
