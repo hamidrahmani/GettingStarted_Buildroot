@@ -24,6 +24,11 @@ jobs:
         run: |
           cd buildroot-master_from-github/
           make beaglebone_defconfig
+                    
+          ### activate custom package
+          echo 'BR2_PACKAGE_GREETING=y' >> .config
+          echo 'BR2_PACKAGE_GREETING2=y' >> .config
+          make olddefconfig
 
       - name: Build with Buildroot
         run: |
