@@ -14,6 +14,19 @@ Note: after the build process there shold be 4 files under /output/image/  --> r
     - #run the qemu
         ./start-qemu.sh
 
+### steps to create an buildroot image on sdcard for arm running on beagleboneblack
+    - # sets up the .config file with default options suitable for running the kernel on beaglebone board. This must done before building the kernel.
+        make beaglebone_defconfig
+    - # change the default option if needed
+        make menuconfig    
+    - #build the imgae
+        make
+
+Note: after the build process there shold be several files created under /output/image/  --> most important file is sdcard.img
+    - #copy the sdcard.img file on sdcard
+        sudo dd if=output/images/sdcard.img of=/dev/sdX bs=4M status=progress && sync --> be sure the correct dev/ are selecte. most probably this is /dev/sdb.
+    - #boot the beageboneblack --> insert the sdcard into BBB and press the sw2 before power-on.
+
 
 ### how to integrate the costumer application into buildroot
     - create your application directory inside buildroot package directory
