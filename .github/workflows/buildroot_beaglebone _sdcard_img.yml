@@ -1,0 +1,50 @@
+name: Buildroot Release
+
+on:
+  push:
+    tags:
+      - 'sdcard_v*'
+
+permissions:
+  contents: write  # Required for creating releases
+
+jobs:
+  build:
+    name: Build Buildroot Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Configure Buildroot
+        run: |
+          cd buildroot-master_from-github/
+          make beaglebone_defconfig
+
+      - name: Build with Buildroot
+        run: |
+          cd buildroot-master_from-github/
+          make
+
+      - name: Prepare release files
+        run: |
+          mkdir -p dist
+          cp buildroot-master_from-github/output/images/sdcard.img dist/
+          
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum * > checksums.sha256
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/sdcard.img
+            dist/checksums.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
