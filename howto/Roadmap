@@ -11,3 +11,4 @@ steps to try out:
 7. replace the init-system with systemd
 8. config, manipulate and run a webserver on buildroot over init-system and also over systemd
 9. activate ssh on bbb to connecting to the board over ssh and not FTDI-TTL
+10. extend .yml file to build packages independent to kernel
