@@ -3,7 +3,7 @@ name: Buildroot Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'qemu_v*'
 
 permissions:
   contents: write  # Required for creating releases
