@@ -15,6 +15,20 @@ Note: if qemu-start.sh script is used the the approprite line must be the looks 
         - or in web browser --> http://localhost:8080/index.html 
 
 ##### appproach2: custom webserver using the rootfs-layout
+    - enable the Lighttpd package in Buildroot (BR2_PACKAGE_LIGHTTPD)
+    - Place the web content like index.html in an overlay directory
+        - board/qemu/rootfs-overlay/var/www/html/index.html
+        - board/qemu/rootfs-overlay/var/www/..... -> for other files or structures
+    - instruct buildroot to use your files
+        - go to: System configuration → Root filesystem overlay directories
+        - enter the path to your overlay directory --> board/qemu/rootfs-overlay
+    - built image 
+    - set up QEMU port forwarding to access the web server from your host --> -net user hostfwd=tcp::8080-:80
+    - run the script to boot the QEMU
+    - call the page
+        - either over terminal --> curl http://localhost:8080/index.html
+        - or in web browser --> http://localhost:8080/index.html 
+
 ##### appproach3: custom webserver using the user package 
 
 
