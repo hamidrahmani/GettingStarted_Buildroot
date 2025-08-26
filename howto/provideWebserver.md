@@ -34,5 +34,17 @@ Note: if qemu-start.sh script is used the the approprite line must be the looks 
 
 
 ##### running on boardbeaglebone board
-
+    - provide configuration file for beagelbone --> make beaglebone_defconfig
+    - enable the Lighttpd package in Buildroot (BR2_PACKAGE_LIGHTTPD)
+    - Place the web content like index.html in an overlay directory
+        - board/beagleboard/beaglebone/rootfs-overlay/var/www/html/index.html
+        - board/beagleboard/beaglebone/rootfs-overlay/var/www/..... -> for other files or structures
+    - instruct buildroot to use your files
+        - go to: System configuration → Root filesystem overlay directories
+        - enter the path to your overlay directory --> board/beagleboard/beaglebone/rootfs-overlay
+    - built image 
+    - install the sdcard.img into sdcard (see coresponding .sh) and boot the beaglebone
+    - call the page
+        - either over terminal --> curl http://<beaglebone-ip>/index.html
+        - or in web browser --> http://<beaglebone-ip>/index.html
  

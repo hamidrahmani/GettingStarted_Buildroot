@@ -65,3 +65,30 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
 ------------------------------------------------------------------------------------
+
+Create Token:
+  Go to GitHub Token Settings:
+  Click “Generate new token” → Choose “Classic” or “Fine-grained”:
+
+For release workflows, select:
+  repo
+  workflow
+  write:packages (if needed)
+  read:org (if accessing organization resources)
+  Generate and Copy the Token:
+
+  Click “Generate token”.
+  Copy it immediately—you won’t be able to view it again.
+
+Update Your Repository Secrets:
+  Go to your repository → Settings → Secrets and variables → Actions.
+  Click “New repository secret”.
+  Name it (e.g., RELEASE_TOKEN).
+  Paste the new token and save.
+
+
+Note: do not forget to update the token if it is not unlimited.
+  Go to your repository → Settings → Secrets and variables → Actions.
+  Find the secret named GH_PAT.
+  Click the pencil icon ✏️ to edit it.
+  Paste the new token and save.
