@@ -6,15 +6,17 @@ steps to try out:
 4. run image on qemu --> DONE
 5. set up and run CI/CD to build, test and upload the binary into server 
     - github-releases --> usage of .yml files as automating scripts for running the the coomands on github-action --> DONE
-    - other alternatives
+    - other alternatives --> OPEN
 6. setup and run a minimal webserver to run a simple application 
     - lighttpd webserver 
         - minimal setup with buildroot --> DONE
         - use user-defined package (with the halp of layout concept) --> DONE
-7. replace the init-system with systemd
-8. config, manipulate and run a webserver on buildroot over init-system and also over systemd
-9. activate ssh on bbb to connecting to the board over ssh and not FTDI-TTL
-10. extend .yml file to build packages independent to kernel
+7. replace the init-system with systemd --> OPEN
+8. config, manipulate and run a webserver on buildroot over init-system and also over systemd --> OPEN 
+9. alternatives to FTDI
+    - use mini-usb instead of FTDI --> OPEN
+    - use ssh instead of FTDI --> OPEN
+10. extend .yml file to build packages independent to kernel --> ?
 11. Artifact repository manager
-    - github packages 
-    - JFORG artifactory
+    - github packages   --> OPEN
+    - JFORG artifactory --> OPEN 
