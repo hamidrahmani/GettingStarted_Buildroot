@@ -1,34 +1,39 @@
-### steps to create an buildroot image for arm running in QEMU board
-    - #install the qmeu base package and the QEMU system emulator for ARM architectures
+# steps to create an image running on QEMU board using buildroot 
+    - install the QEMU package and QEMU emulator for ARM architectures
         sudo apt update
         sudo apt install qemu qemu-system-arm
 
-    - # sets up the .config file with default options suitable for running the kernel on QEMU's ARM Versatile board. This must done before building the kernel.
+    - sets up the .config file with default options suitable for running the kernel on QEMU. This must be done before building the kernel.
         make qemu_arm_versatile_defconfig
-    - # change the default option if needed
+    - change the default option if needed
         make menuconfig    
-    - #build the imgae
+    - build the imgae
         make
 
-Note: after the build process there shold be 4 files under /output/image/  --> rootfs.ext2, start-qemu.sh, versatile-pb.dtb, zImage, ./start-qmeu.sh
-    - #run the qemu
+Note: after the build process done there shold be 5 files under /output/image/  --> 
+            1. rootfs.ext2, 
+            2. start-qemu.sh, 
+            3. versatile-pb.dtb, 
+            4. zImage, 
+            5. ./start-qmeu.sh 
+    - run the script to execute qemu board with needed parameters
         ./start-qemu.sh
 
-### steps to create an buildroot image on sdcard for arm running on beagleboneblack
-    - # sets up the .config file with default options suitable for running the kernel on beaglebone board. This must done before building the kernel.
+# steps to create an image running on buildroot board using buildroot
+    - set up the .config file with default options suitable for running the kernel on beaglebone board. This must be done before building the kernel.
         make beaglebone_defconfig
-    - # change the default option if needed
+    - change the default option if needed
         make menuconfig    
-    - #build the imgae
+    - build the imgae
         make
 
-Note: after the build process there shold be several files created under /output/image/  --> most important file is sdcard.img
-    - #copy the sdcard.img file on sdcard
+Note: after the build process done there shold be several files created under /output/image/  --> most important file is sdcard.img
+    - copy the sdcard.img file on sdcard
         sudo dd if=output/images/sdcard.img of=/dev/sdX bs=4M status=progress && sync --> be sure the correct dev/ are selecte. most probably this is /dev/sdb.
-    - #boot the beageboneblack --> insert the sdcard into BBB and press the sw2 before power-on.
+    - boot the beagebone board from sd-card --> insert the sdcard and restart the board bbb.
 
 
-### how to integrate the costumer application into buildroot
+# how to integrate the costumer application into buildroot
     - create your application directory inside buildroot package directory
         - mkdir package/userApps
     - register the application package in buildroot
