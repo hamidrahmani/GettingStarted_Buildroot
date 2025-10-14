@@ -1,6 +1,22 @@
-### steps to provide the lighttpd webserver 
-#### running on  arm QEMU board
-##### appproach1: minimal webserver using the default setup 
+# webserver
+## steps to provide the lighttpd webserver 
+Be sure that
+    - lighttpd is included in host:
+            --> ls output/target/usr/sbin/lighttpd or ls output/target/usr/bin/lighttpd
+            --> grep LIGHTTPD .config  BR2_PACKAGE_LIGHTTPD=y should be available
+    -  lighttpd is included on target
+            --> which lighttpd or ls /usr/sbin/lighttpd
+            --> ps | grep lighttpd
+            --> cat /etc/lighttpd/lighttpd.conf
+    - your landing page (index.html) exists e.g. in /var/www/html. It is defined in /etc/lighttpd/lighttpd.conf file
+    - ip addres of the  board is set
+        --> ip addr
+        -->if not set yet then: ip addr add 192.168.1.200/24 dev eth0
+        --> and activate: ip link set eth0 up
+    - accessability of the web-server is given
+
+### running on  arm QEMU board
+approach1: minimal webserver using the default setup 
     - enable the Lighttpd package in Buildroot (BR2_PACKAGE_LIGHTTPD)
         - either selecting the Lighttpd package in make menuconfig under "Target packages" → "Networking applications" → "lighttpd".
         - or BR2_PACKAGE_LIGHTTPD=y in .config file
@@ -14,7 +30,7 @@ Note: if qemu-start.sh script is used the the approprite line must be the looks 
         - either over terminal --> curl http://localhost:8080/index.html
         - or in web browser --> http://localhost:8080/index.html 
 
-##### appproach2: custom webserver using the rootfs-layout
+approach2: custom webserver using the rootfs-layout
     - enable the Lighttpd package in Buildroot (BR2_PACKAGE_LIGHTTPD)
     - Place the web content like index.html in an overlay directory
         - board/qemu/rootfs-overlay/var/www/html/index.html
@@ -29,12 +45,11 @@ Note: if qemu-start.sh script is used the the approprite line must be the looks 
         - either over terminal --> curl http://localhost:8080/index.html
         - or in web browser --> http://localhost:8080/index.html 
 
-##### appproach3: custom webserver using the user package 
+approach3: custom webserver using the user package 
 
-
-
-##### running on boardbeaglebone board
-    - provide configuration file for beagelbone --> make beaglebone_defconfig
+### running on boardbeaglebone board
+    - provide configuration file for beagelbone 
+        --> make beaglebone_defconfig
     - enable the Lighttpd package in Buildroot (BR2_PACKAGE_LIGHTTPD)
     - Place the web content like index.html in an overlay directory
         - board/beaglebone/rootfs-overlay/var/www/html/index.html
@@ -48,10 +63,4 @@ Note: if qemu-start.sh script is used the the approprite line must be the looks 
         - either over terminal --> curl http://<beaglebone-ip>/index.html
         - or in web browser --> http://<beaglebone-ip>/index.html
  
-Note: 
-- check the ip address of the board --> ip addr
-- if no ip address is assigned --> ifconfig eth0 192.168.1.100 netmask 255.255.255.0 up 
-- check if lighttpd is running --> ps | grep lighttpd
-- check the lighttpd configuration --> cat /etc/lighttpd/lighttpd.conf
-    - root-document
-    - port
+
