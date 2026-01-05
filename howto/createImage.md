@@ -27,9 +27,10 @@ Note: after the build process done there shold be 5 files under /output/image/  
     - build the imgae
         make
 
-Note: after the build process is done several files are available under /output/image/. The most important file is sdcard.img;
+# note
+    After the build process is done several files are available under /output/image/. The most important file is sdcard.img.
     - copy the sdcard.img file on sdcard
-        sudo dd if=output/images/sdcard.img of=/dev/sdX bs=4M status=progress && sync --> be sure the correct dev/ are selecte. most probably this is /dev/sdb.
+        sudo dd if=output/images/sdcard.img of=/dev/sdX bs=4M status=progress && sync --> be sure the correct dev/ is selected. This is most probably /dev/sdb.
     - boot the beagebone board from sd-card --> insert the sdcard and restart the board bbb.
 
 
@@ -38,7 +39,7 @@ Note: after the build process is done several files are available under /output/
         - mkdir package/userApps
     - register the application package in buildroot
         - nano package/Config.in
-    - configure your application as buildroot package and also building all .mk files insode userApps
+    - configure your application as buildroot package and also building all .mk files inside userApps
         - nano package/userApps/Config.in
         - nano package/userApps/userApps.mk
     - instruct buildroot to build and install the application into target filesystem
@@ -47,5 +48,4 @@ Note: after the build process is done several files are available under /output/
         - make menucondig
     - build the image
         - make
-
-Note: if the application package has sub-directories for different kinds of application there must be some changes inside the Config.in and userApps.mk files
+    - note: if the application package has sub-directories changes are nededed inside the Config.in and userApps.mk files
