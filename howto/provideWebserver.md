@@ -11,9 +11,19 @@ Be sure that
     - your landing page (index.html) exists e.g. in /var/www/html. It is defined in /etc/lighttpd/lighttpd.conf file
     - ip addres of the  board is set
         --> ip addr
-        -->if not set yet then: ip addr add 192.168.1.200/24 dev eth0
+        --> if not set yet then: ip addr add 192.168.1.200/24 dev eth0
         --> and activate: ip link set eth0 up
     - accessability of the web-server is given
+    - configuration file /etc/lighttpd/lighttpd.conf is correct. 
+        server.modules = (
+            "mod_access",
+            "mod_staticfile",
+        )
+        server.document-root = "var/www/thml"
+        index-file.names = ( "index.html" )
+        server.bind = "0.0.0.0"
+        server.port = 80
+
 
 ### running on  arm QEMU board
 approach1: minimal webserver using the default setup 
@@ -47,7 +57,8 @@ approach2: custom webserver using the rootfs-layout
 
 approach3: custom webserver using the user package 
 
-### running on boardbeaglebone board
+### running on beagleboneblack board
+-custom webserver using the rootfs-layout and permanently
     - provide configuration file for beagelbone 
         --> make beaglebone_defconfig
     - enable the Lighttpd package in Buildroot (BR2_PACKAGE_LIGHTTPD)
@@ -57,10 +68,21 @@ approach3: custom webserver using the user package
     - instruct buildroot to use your files
         - go to: System configuration → Root filesystem overlay directories
         - enter the path to your overlay directory --> board/beaglebone/rootfs-overlay
+    - edit the file /etc/lighttpd/lighttpd.conf like below:
+        server.modules = (
+            "mod_access",
+            "mod_staticfile",
+        )
+        server.document-root = "/var/www/html"
+        index-file.names = ( "index.html" )
+        server.bind = 
+        "0.0.0.0"
+        server.port = 80
+
     - built image 
     - install the sdcard.img into sdcard (see coresponding .sh) and boot the beaglebone
     - call the page
         - either over terminal --> curl http://<beaglebone-ip>/index.html
         - or in web browser --> http://<beaglebone-ip>/index.html
- 
+
 

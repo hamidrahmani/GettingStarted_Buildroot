@@ -1,0 +1,22 @@
+###################### this file is located in overlay folder #####################
+#!/bin/sh
+
+CONFIG="/etc/lighttpd/lighttpd.conf"
+DAEMON="/usr/sbin/lighttpd"
+
+case "$1" in
+  start)
+    echo "Starting lighttpd"
+    $DAEMON -f $CONFIG
+    ;;
+  stop)
+    echo "Stopping lighttpd"
+    killall lighttpd
+    ;;
+  restart)
+    echo "Restarting lighttpd"
+    killall lighttpd
+    $DAEMON -f $CONFIG
+    ;;
+esac
+###########################################
