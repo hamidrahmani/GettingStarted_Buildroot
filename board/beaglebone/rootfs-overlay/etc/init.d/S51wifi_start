@@ -1,0 +1,21 @@
+###################### this file is located in overlay folder #####################
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          wifi_start
+# Required-Start:    $network
+# Default-Start:     S
+# Default-Stop:
+# Short-Description: Bring up wlan0 on boot
+### END INIT INFO
+
+. /etc/init.d/functions || true
+
+# bring up interface
+ip link set wlan0 up || true
+
+# start wpa_supplicant in background (adjust path if wpa_supplicant packaged differently)
+wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf || true
+
+# request DHCP
+udhcpc -i wlan0 || true
+###########################################

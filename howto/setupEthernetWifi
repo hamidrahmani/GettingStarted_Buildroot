@@ -1,17 +1,17 @@
 
-# Configuring wifi
+# Wifi configuration 
+## assumption
+bbb + usb wifi dongle with realtek rtl8188eu chipset
+
 ## verify either wifi is available
 - run command --> ip link 
 if no wifi interface appears then need to be configured 
-## discover the wifi hardware
-connect wifi usb-dongle if beagel does not provide internal wifi chip
+
+## discover the wifi hardware 
 - run command --> lsusb 
 or better 
 - rum command --> dmesg | grep -i rtl
-- if driver is configured something like following will be shown as the exact HW model:
-    "RTL8188EU rev D" 
--if the  firmware is not actived then something like following will be shown:
-# dmesg | grep -i rtl
+output shows the exact usb dongle model and correcponding firmware as follow: 
 [    9.716904] usb 1-1: Dumping efuse for RTL8188EU (0x200 bytes):
 [    9.996243] usb 1-1: RTL8188EU rev D (TSMC) romver 0, 1T1R, TX queues 2, WiFi=1, BT=0, GPS=0, HI PA=0
 [   10.006054] usb 1-1: RTL8188EU MAC: cc:28:aa:68:d5:3d
@@ -20,21 +20,49 @@ or better
 [   10.035954] usb 1-1: request_firmware(rtlwifi/rtl8188eufw.bin) failed
 [   10.048602] rtl8xxxu 1-1:1.0: probe with driver rtl8xxxu failed with error -11
 [   10.057188] usbcore: registered new interface driver rtl8xxxu
+as the output shows the required firmware is rtlwifi/rtl8188eufw.bin is not loaded.
 
+## Steps to configure wifi in buildroot
+1- Kernel driver for the wifi chipset
+2- Firmware for the wifi chipset
+3- Userspace wifi tools --> wpa_supplicant, iw, ifconfig/ip
+4- Network configuration --> /etc/network/interfaces
+5- web server -->  Target packages --> Networking applications --> lighttpd
 
-## select wifi firmware 
-run make menuconfig --> Target packages -->  Hardware handling --> Firmware --> linux-firmware --> wifi firmware --> realtek 81xx and realtek88xx
-and also --> Target packages -->  Hardware handling --> Firmware --> linux-firmware --> rtl8188eu
-## select the correct driver
+### 1- select wifi driver
 run make linux-manuconfig --> device drivers --> network device support --> wireless lan --> realtek devices --> realtek 802.11n usb wireless
-## wlan configuration
-- run make menuconfig --> Target packages --> nwtwork applications --> wpa_supplicant, wireless_tools, iw
 
-# verify the configuration
-ater building the kernel flashing the the sdcard insert it in bbb and boot. 
+### 2- select wifi firmware 
+run make menuconfig --> Target packages -->  Hardware handling --> Firmware --> linux-firmware --> wifi firmware --> realtek81xx and realtek88xx
+and also --> Target packages -->  Hardware handling --> Firmware --> linux-firmware --> rtl8188eu
+
+### 3- user space wifi configuration
+- run make menuconfig --> Target packages --> network applications --> wpa_supplicant, wireless_tools, iw, dhcp
+- create config file --> /etc/wpa_supplicant.conf and fill with 
+    ctrl_interface=/var/run/wpa_supplicant 
+    update_config=1
+    country=DE
+    network={
+        ssid="WLAN_hamidTest"
+        psk="123321"
+        key_mgmt=WPA-PSK
+    }
+- create startup scrips --> /etc/init.d/S51wifi_start and fill with
+    #!/bin/sh
+    ip link set wlan0 up
+    wpa_supplicant -i wlan0 -c /etc/wpa_supplicant.conf -B
+    udhcpc -i wlan0
+- make it executable --> chmod +x /etc/init.d/S51wifi_start
+- start the wifi --> /etc/init.d/S51wifi_start
+
+### 4- network configuration
+### 5- web server configuration
+
+## final verification wifi configuration
+### 1- verify the driver and firmware loaded correctly
+after building the kernel flashing the the sdcard insert it in bbb and boot. 
 run command --> dmesg | grep -i rtl
-now the right driver and fim ware should be appears in the log as follow:
-# dmesg | grep -i rtl
+now the right driver and firmware should be appears in the log as follow:
 [    9.718241] usb 1-1: Dumping efuse for RTL8188EU (0x200 bytes):
 [    9.997229] usb 1-1: RTL8188EU rev D (TSMC) romver 0, 1T1R, TX queues 2, WiFi=1, BT=0, GPS=0, HI PA=0
 [   10.007060] usb 1-1: RTL8188EU MAC: cc:28:aa:68:d5:3d
@@ -43,24 +71,12 @@ now the right driver and fim ware should be appears in the log as follow:
 [   10.995691] RTW: rtl8188eu v5.2.2.4_25483.20171222
 [   11.001679] usbcore: registered new interface driver rtl8188eu
 
-### needed files
-- create config file --> /etc/wpa_supplicant.conf and fill with 
-    ctrl_interface=/var/run/wpa_supplicant 
-    update_config=1
-    country=DE
-    network={
-        ssid="MeinWLAN"
-        psk="meinpasswort123"
-        key_mgmt=WPA-PSK
-    }
-- create startup scrips --> /etc/init.d/wifi_start and fill with
-    #!/bin/sh
-    ip link set wlan0 up
-    wpa_supplicant -i wlan0 -c /etc/wpa_supplicant.conf -B
-    udhcpc -i wlan0
-- make it executable --> chmod +x /etc/init.d/wifi_start
-- start the wifi --> /etc/init.d/wifi_start
+### 2- make sure the interface is up and ip assigned
+ip link set wlan0 up
+ip addr show wlan0
 
+### 3. verify/scan for available access points
+iw dev wlan0 scan | egrep 'SSID|signal|freq' -B1 -A2 || true
 
-
+## provide wifi firmware over rootfs-overlay
 
