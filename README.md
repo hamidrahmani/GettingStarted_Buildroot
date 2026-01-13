@@ -1,10 +1,24 @@
-# GettingStarted_Buildroot
-This is a repository to host a buildroot with my own application in order to playing around with buildroot and finding out how everything comes toghether.
+# About Repository
+## Purpose 
+This repository provides a minimal customized embedded linux configured for Beaglebone board with the purpose of showing how everything fit together and builds a running, robust and reliable linux solution for embedded applications. Focus is on:
+- showing the anatomy of buildroot and how everything get configured and works
+- showing how to build a simple but reliabe working ustomized embedded linux 
+- integrating the user applications into finale binary
+  
+## Structure of the Repository
+- buildroot/                   # Upstream Buildroot source (renamed from buildroot-master_from-github)
+- overlays/                    # Board overlays and board-specific configurations
+  - beaglebone/                  # BeagleBone-specific files
+    - rootfs-overlay/              # Root filesystem overlay files
+- docs/                        # Documentation and how-to guides
+- scripts/                     # Flash scripts and helper scripts (e.g., flash_beaglebone_*.sh)
+- examples/                    # Small runnable examples (e.g., Lighttpd config, tests)
+- .gitignore
+- README.md
 
-
-
-# following releases are available so far (release assets are stored unter release tab in github)
-- v1.0      -->     basecode of official buildroot code
-- bv        -->     contains the build artifacts 
-- sdcard_v  -->     contains the sdcard.img
+# Available Releases
+The following releases are currently available. 
+- v1.0 → Base code from the official Buildroot source
+- artifact_v → Includes the compiled build artifacts
+- sdcard_v → Contains the complete sdcard.img for flashing
 
