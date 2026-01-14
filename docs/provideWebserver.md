@@ -67,7 +67,7 @@ approach3: custom webserver using the user package
         - board/beaglebone/rootfs-overlay/var/www/..... -> for other files or structures
     - instruct buildroot to use your files
         - go to: System configuration → Root filesystem overlay directories
-        - enter the path to your overlay directory --> board/beaglebone/rootfs-overlay
+        - enter the path to your overlay directory --> ../overlays/beaglebone/rootfs-overlay
     - edit the file /etc/lighttpd/lighttpd.conf like below:
         server.modules = (
             "mod_access",
