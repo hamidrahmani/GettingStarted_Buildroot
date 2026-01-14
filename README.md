@@ -20,5 +20,5 @@ This repository provides a minimal, customized embedded Linux system configured 
 The following releases are currently available. 
 - v1.0 → Base code from the official Buildroot source
 - artifact_v → Includes the compiled build artifacts
-- sdcard_v → Contains the complete sdcard.img for flashing
+- image_v → Contains the complete sdcard.img for flashing
 
