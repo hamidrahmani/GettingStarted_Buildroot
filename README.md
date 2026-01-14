@@ -11,8 +11,8 @@ This repository provides a minimal, customized embedded Linux system configured 
   - beaglebone/                 # BeagleBone-specific files
     - rootfs-overlay/            # Root filesystem overlay files
 - docs/                        # Documentation and how-to guides
-- scripts/                     # Flash scripts and helper scripts (e.g., flash_beaglebone_*.sh)
-- examples/                    # Small runnable examples (e.g., Lighttpd config, tests)
+- scripts/                     # Flash scripts and helper scripts
+- examples/                    # Small runnable examples (e.g., config, usecases, ...)
 - .gitignore
 - README.md
 
