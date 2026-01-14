@@ -6,7 +6,7 @@ This repository provides a minimal, customized embedded Linux system configured 
 - integrating the user applications into finale binary
   
 ## Structure of the Repository
-- buildroot/                   # Upstream Buildroot source (renamed from buildroot-master_from-github)
+- buildroot/                   # Upstream Buildroot source (kernel version: 6.12.23)
 - overlays/                    # Board overlays and board-specific configurations
   - beaglebone/                 # BeagleBone-specific files
     - rootfs-overlay/            # Root filesystem overlay files
