@@ -18,5 +18,10 @@
     auto eth0
     iface eth0 inet dhcp
 
+## starting the network manually
+/etc/init.d/S40network start
+/etc/init.d/S40network stot
+/etc/init.d/S40network restart
+
 ## using rootfs-ovrelay
 - add the file /etc/network/interfaces inside the rootfs-overlay folder.build the image and boot the system
