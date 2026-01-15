@@ -1,0 +1,18 @@
+
+#!/bin/sh
+# Bring eth0 up via udhcpc exactly once (no duplicate routes) 
+# Short-Description: Ethernet bringup (udhcpc on eth0) 
+
+echo "[S41eth] Bringing up eth0..."
+
+ip link set eth0 up 2>/dev/null
+killall -x udhcpc 2>/dev/null
+
+# Clean stale routes for eth0 if any
+ip route del default dev eth0 2>/dev/null
+
+# Start a single DHCP client
+udhcpc -b -i eth0 -x hostname:bbb-eth
+
+echo "[S41eth] eth0 address:"
+ip addr show eth0 | sed 's/^/    /'

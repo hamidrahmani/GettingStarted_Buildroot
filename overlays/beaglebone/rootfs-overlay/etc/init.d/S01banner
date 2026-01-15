@@ -1,0 +1,14 @@
+
+
+#!/bin/sh
+
+printf "\n"
+printf "  ###################################################\n"
+printf "  ##         Welcome to Hamid's Buildroot          ##\n"
+printf "  ###################################################\n"
+printf "\n"
+printf "    / >🍪   your BBB is booting...\n"
+printf "\n"
+
+exit 0
+
