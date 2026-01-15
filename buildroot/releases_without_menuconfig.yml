@@ -8,6 +8,9 @@ on:
 permissions:
   contents: write  # Required for creating releases
 
+env: 
+  BR_DIR: buildroot
+
 jobs:
   build:
     name: Build Buildroot Image
@@ -22,7 +25,7 @@ jobs:
 
       - name: Configure Buildroot with U-Boot
         run: |
-          cd buildroot-master_from-github/
+          cd ${{ env.BR_DIR }}/
           make beaglebone_defconfig
 
           ### activate uboot
@@ -40,18 +43,18 @@ jobs:
 
       - name: Build with Buildroot
         run: |
-          cd buildroot-master_from-github/
+          cd ${{ env.BR_DIR }}/
           make
 
       - name: Prepare release files
         run: |
           mkdir -p dist
-          cp buildroot-master_from-github/output/images/zImage dist/
-          cp buildroot-master_from-github/output/images/rootfs.ext4 dist/
-          cp buildroot-master_from-github/output/images/rootfs.tar dist/
-          cp buildroot-master_from-github/output/images/am335x-bone.dtb dist/
-          cp buildroot-master_from-github/output/images/MLO dist/
-          cp buildroot-master_from-github/output/images/u-boot.img dist/
+          cp ${{ env.BR_DIR }}/output/images/zImage dist/
+          cp ${{ env.BR_DIR }}/output/images/rootfs.ext4 dist/
+          cp ${{ env.BR_DIR }}/output/images/rootfs.tar dist/
+          cp ${{ env.BR_DIR }}/output/images/am335x-bone.dtb dist/
+          cp ${{ env.BR_DIR }}/output/images/MLO dist/
+          cp ${{ env.BR_DIR }}/output/images/u-boot.img dist/
 
       - name: Generate checksums
         run: |

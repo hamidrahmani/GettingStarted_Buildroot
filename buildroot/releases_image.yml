@@ -3,10 +3,13 @@ name: Buildroot Release
 on:
   push:
     tags:
-      - 'qemu_v*'
+      - 'image_v*'
 
 permissions:
   contents: write  # Required for creating releases
+
+env: 
+  BR_DIR: buildroot
 
 jobs:
   build:
@@ -20,22 +23,26 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential
 
+      - name: Configure Buildroot
+        run: |
+          cd ${{ env.BR_DIR }}/ #  buildroot-master_from-github/
+          make beaglebone_defconfig
+                    
+          ### activate custom package
+          echo 'BR2_PACKAGE_GREETING=y' >> .config
+          echo 'BR2_PACKAGE_GREETING2=y' >> .config
+          make olddefconfig
+
       - name: Build with Buildroot
         run: |
-         # make versatilepb_defconfig 
-          cd buildroot-master_from-github/
-         # make versatile_deficonfig
-          make qemu_arm_versatile_defconfig
+          cd ${{ env.BR_DIR }}/ #  buildroot-master_from-github/
           make
 
       - name: Prepare release files
         run: |
           mkdir -p dist
-          cp buildroot-master_from-github/output/images/zImage dist/
-          cp buildroot-master_from-github/output/images/rootfs.ext2 dist/
-          cp buildroot-master_from-github/output/images/versatile-pb.dtb dist/
-          cp buildroot-master_from-github/output/images/start-qemu.sh dist/
-
+          cp ${{ env.BR_DIR }}/output/images/sdcard.img dist/
+          
       - name: Generate checksums
         run: |
           cd dist
@@ -45,11 +52,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/zImage
-            dist/rootfs.ext2
-            dist/versatile-pb.dtb
-            dist/start-qemu.sh
+            dist/sdcard.img
             dist/checksums.sha256
         env:
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Use a PAT with repo permissions
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
