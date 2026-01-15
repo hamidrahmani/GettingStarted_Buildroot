@@ -1,0 +1,6 @@
+config BR2_PACKAGE_GPIO_WEB
+    bool "gpio-web (Lighttpd CGI + libgpiod)"
+    select BR2_PACKAGE_LIBGPIOD
+    select BR2_PACKAGE_LIGHTTPD
+    help
+      Installs CGI handlers, index.html, and lighttpd.conf to /www and /etc/lighttpd.

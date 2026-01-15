@@ -1,0 +1,64 @@
+
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>BBB I/O Panel</title></head>
+<body>
+  <h1>GPIO Control</h1>
+
+  <section>
+    <h3>Read input</h3>
+    <label>Chip: <input id="rchip" value="gpiochip0"></label>
+    <label>Line: <input id="rline" value="23"></label>
+    <button onclick="readInput()">Read</button>
+    <pre id="iread"></pre>
+  </section>
+
+  <section>
+    <h3>Set output</h3>
+    <label>Chip: <input id="wchip" value="gpiochip0"></label>
+    <label>Line: <input id="wline" value="60"></label>
+    <button onclick="setOut(1)">HIGH</button>
+    <button onclick="setOut(0)">LOW</button>
+    <pre id="owrite"></pre>
+  </section>
+
+  <section>
+    <h3>Run job</h3>
+    <select id="job">
+      <option>calibrate</option>
+      <option>capture</option>
+      <option>reboot-safe</option>
+    </select>
+    <button onclick="runJob()">Run</button>
+    <pre id="jout"></pre>
+  </section>
+
+  <script>
+  async function readInput() {
+    const chip = document.getElementById('rchip').value;
+    const line = document.getElementById('rline').value;
+    const r = await fetch(`/api/gpio_read.cgi?chip=${encodeURIComponent(chip)}&line=${encodeURIComponent(line)}`);
+    document.getElementById('iread').textContent = await r.text();
+  }
+  async function setOut(val) {
+    const chip = document.getElementById('wchip').value;
+    const line = parseInt(document.getElementById('wline').value,10);
+    const r = await fetch(`/api/gpio_write.cgi`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({chip, line, value: val})
+    });
+    document.getElementById('owrite').textContent = await r.text();
+  }
+  async function runJob() {
+    const id = document.getElementById('job').value;
+    const r = await fetch(`/api/run_job.cgi`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({id})
+    });
+    document.getElementById('jout').textContent = await r.text();
+  }
+  </script>
+</body>
+</html>
