@@ -1,0 +1,33 @@
+
+#!/bin/sh
+# /etc/init.d/S40wifi
+# Start Wi‑Fi and get a DHCP lease exactly once (no duplicate routes)
+# Short-Description: Bring up wlan0 via wpa_supplicant + udhcpc
+
+echo "[S40wifi] Bringing up wlan0..."
+
+# Ensure interface exists and is up
+ip link set wlan0 up 2>/dev/null
+
+# Kill any stale instances from previous boots
+pkill -x wpa_supplicant 2>/dev/null
+pkill -x udhcpc 2>/dev/null
+
+# Start WPA supplicant (no ctrl_interface required)
+wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+
+# Optional: wait a moment for association to happen
+sleep 3
+
+# Clean up stale routes on wlan0 (avoid duplicates)
+ip route del default dev wlan0 2>/dev/null
+ip route del 192.168.1.0/24 dev wlan0 2>/dev/null
+
+# Start DHCP client ONCE for wlan0; set hostname for a stable lease identity
+# -b = background after lease, -i = interface, -x hostname:...
+udhcpc -b -i wlan0 -x hostname:bbb-wifi
+
+# Done
+echo "[S40wifi] wlan0 status:"
+iw dev wlan0 link 2>/dev/null || true
+ip addr show wlan0 | sed 's/^/    /'

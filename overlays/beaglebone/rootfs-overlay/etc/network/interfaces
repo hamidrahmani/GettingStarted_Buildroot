@@ -1,9 +1,16 @@
 
+# /etc/network/interfaces
+
 auto lo
 iface lo inet loopback
 
+# Ethernet: managed manually by /etc/init.d/S40eth (no automatic DHCP here)
 auto eth0
-iface eth0 inet static
-    address 192.168.1.11
-    netmask 255.255.255.0
-    gateway 192.168.1.1
+iface eth0 inet manual
+    metric 10
+
+# Wi‑Fi: managed manually by /etc/init.d/S40wifi (no automatic DHCP here)
+auto wlan0
+iface wlan0 inet manual
+    wpa-conf /etc/wpa_supplicant.conf
+    metric 50
