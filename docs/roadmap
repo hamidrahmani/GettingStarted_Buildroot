@@ -20,3 +20,6 @@ steps to try out:
 11. Artifact repository manager
     - github packages   --> OPEN
     - JFORG artifactory --> OPEN 
+12. read sensor values connected to bb and show in webserver --> OPEN
+13. send a command from webinterface (web / mobile) to the bb for switching on/off an output --> OPEN
+14. send command from webinerface to bb to run a script on bb --> OPEN
