@@ -4,12 +4,12 @@
 auto lo
 iface lo inet loopback
 
-# Ethernet: managed manually by /etc/init.d/S40eth (no automatic DHCP here)
+# Ethernet: managed manually by /etc/init.d/S41eth (no automatic DHCP here)
 auto eth0
 iface eth0 inet manual
     metric 10
 
-# Wi‑Fi: managed manually by /etc/init.d/S40wifi (no automatic DHCP here)
+# Wi‑Fi: managed manually by /etc/init.d/S42wifi (no automatic DHCP here)
 auto wlan0
 iface wlan0 inet manual
     wpa-conf /etc/wpa_supplicant.conf
