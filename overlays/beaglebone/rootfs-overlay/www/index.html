@@ -1,7 +1,16 @@
-
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><title>BBB I/O Panel</title></head>
+<head>
+  <meta charset="utf-8">
+  <title>BBB I/O Panel</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1rem; }
+    section { margin: 1rem 0; padding: .5rem 1rem; border: 1px solid #ddd; border-radius: 8px; }
+    pre { background: #f8f8f8; padding: .5rem; border-radius: 6px; max-width: 60rem; overflow:auto; }
+    label { margin-right: .5rem; }
+    button { margin-right: .5rem; }
+  </style>
+</head>
 <body>
   <h1>GPIO Control</h1>
 
@@ -25,8 +34,9 @@
   <section>
     <h3>Run job</h3>
     <select id="job">
-      <option>power-mgnt/reboot</option>
-      <option>power-mgnt/sync_reboot</option>
+      <option>01-power-mgnt/reboot</option>
+      <option>01-power-mgnt/sync_reboot</option>
+      <option>90-log-diag/dmesg-recent</option>
     </select>
     <button onclick="runJob()">Run</button>
     <pre id="jout"></pre>
@@ -37,26 +47,31 @@
     const chip = document.getElementById('rchip').value;
     const line = document.getElementById('rline').value;
     const r = await fetch(`/api/gpio_read.cgi?chip=${encodeURIComponent(chip)}&line=${encodeURIComponent(line)}`);
-    document.getElementById('iread').textContent = await r.text();
+    document.getElementById('iread').textContent = `HTTP ${r.status}\n` + await r.text();
   }
   async function setOut(val) {
     const chip = document.getElementById('wchip').value;
-    const line = parseInt(document.getElementById('wline').value,10);
+    const line = parseInt(document.getElementById('wline').value, 10);
     const r = await fetch(`/api/gpio_write.cgi`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({chip, line, value: val})
+      body: JSON.stringify({ chip, line, value: val })
     });
-    document.getElementById('owrite').textContent = await r.text();
+    document.getElementById('owrite').textContent = `HTTP ${r.status}\n` + await r.text();
   }
   async function runJob() {
-    const id = document.getElementById('job').value;
+    const sel = document.getElementById('job').value;  // e.g., "01-power-mgnt/reboot"
+    const [group, id] = sel.split('/', 2);             // split into group + id
+
     const r = await fetch(`/api/run_job.cgi`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({id})
+      body: JSON.stringify({ group, id })               // send both fields
     });
-    document.getElementById('jout').textContent = await r.text();
+
+    let bodyText;
+    try { bodyText = await r.text(); } catch(e) { bodyText = String(e); }
+    document.getElementById('jout').textContent = `HTTP ${r.status}\n${bodyText}`;
   }
   </script>
 </body>
