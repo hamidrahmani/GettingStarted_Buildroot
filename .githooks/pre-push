@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "🔍 pre-push: checking repository integrity..."
+
+# 1) Detect empty loose objects (the issue you hit)
+EMPTY_OBJECTS=$(find .git/objects -type f -empty 2>/dev/null || true)
+
+if [ -n "$EMPTY_OBJECTS" ]; then
+  echo "❌ Found corrupted (empty) loose Git objects:"
+  echo "$EMPTY_OBJECTS"
+  echo
+  echo "➡ To fix, run:"
+  echo "   find .git/objects -type f -empty -delete"
+  echo "   git repack -Ad"
+  echo "   git gc --prune=now"
+  echo
+  echo "Push aborted."
+  exit 1
+fi
+
+# 2) Full fsck (quiet)
+if ! git fsck --full --no-progress --no-dangling >/dev/null 2>&1; then
+  echo "❌ git fsck reported problems. Push aborted."
+  echo "Try:"
+  echo "  git repack -Ad && git gc --prune=now && git fsck --full"
+  exit 1
+fi
+
+echo "✅ pre-push: repository looks healthy."
+exit 0
