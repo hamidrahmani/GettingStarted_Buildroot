@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run the scanner from your repo
+if ! tools/scan_suspicious.sh . ; then
+  echo
+  echo "✗ Pre-commit check failed."
+  echo "  Run: scripts/fix_suspicious.sh ."
+  echo "  Then re-stage and commit again."
+  exit 1
+fi
+
+# Optional: you can add more checks here (shellcheck, shfmt, etc.)
+
+echo "✓ Pre-commit checks passed."
