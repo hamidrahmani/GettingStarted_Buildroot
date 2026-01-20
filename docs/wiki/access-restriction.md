@@ -1,6 +1,7 @@
 # restrict acces on bbb from web
 following solutions are possible
 - whitelist approach
+- user access control 
 - dedicated unprivileged user
 - hard‑map requests to a executables
 - authentication (HTTP, mTLS, IP allowlist)
@@ -15,9 +16,16 @@ The .allow file approach is a directory‑level whitelisting mechanism. Only CGI
 - add .allow file required subfolder "whitelistcmd/01-power-mgnt/" and mention the define executables.
 - adjust the job_run.cgi file to recognize folder/subfolder
 
-## dedicated unprivileged user
-### steps
-- Create a dedicated system user. Users sholdnot have shell and home.
-- Run Lighttpd as a non-privileged user
--
-- File permissions
+## user access control
+### steps 
+- creeate S20-htpasswd
+- create www/whitelistcmd/guard.sh
+- change the lighttpd.conf as in current commit
+- create S20-htpasswd to provide usernames and initial passwords
+- change the passwirds later on 
+    - htpasswd etc/lighttpd/webusers.htpasswd maintainer
+    - htpasswd etc/lighttpd/webusers.htpasswd homer
+    - etc/init.d/S50lighttpd restart
+
+
+ 
