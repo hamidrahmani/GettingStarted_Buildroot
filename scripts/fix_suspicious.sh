@@ -82,4 +82,4 @@ while IFS= read -r -d '' f; do
   fix_file "$f" || true
 done < <(find_targets "$@" -print0)
 
-echo "Done. Re-run tools/scan_suspicious.sh to confirm."
+echo "Done. Re-run scripts/scan_suspicious.sh to confirm."
