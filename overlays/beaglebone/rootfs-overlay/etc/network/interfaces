@@ -9,7 +9,7 @@ auto eth0
 iface eth0 inet manual
     metric 10
 
-# Wi‑Fi: managed manually by /etc/init.d/S42wifi (no automatic DHCP here)
+# WiFi: managed manually by /etc/init.d/S42wifi
 auto wlan0
 iface wlan0 inet manual
     wpa-conf /etc/wpa_supplicant.conf
