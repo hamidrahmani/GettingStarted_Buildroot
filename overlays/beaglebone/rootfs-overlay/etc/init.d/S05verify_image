@@ -1,12 +1,25 @@
 #!/bin/sh
-# Init script to run image verification early in boot
+# Run image verification early in boot; optionally enforce failures.
+
+ENFORCE="${ENFORCE_VERIFY:-1}"   # 0=warn only, 1=enforce (reboot on failure)
+BIN="/usr/local/sbin/verify_boot_image.sh"
 
 case "$1" in
   start)
-    /usr/local/sbin/verify_boot_image.sh || true
+    echo "[verify] Starting image verification..."
+    if "$BIN"; then
+      echo "[verify] OK"
+    else
+      rc=$?
+      echo "[verify] FAILED (rc=$rc)"
+      if [ "$ENFORCE" -eq 1 ]; then
+        echo "[verify] Enforcement ON. Rebooting in 5s..."
+        sleep 5
+        reboot -f
+      fi
+    fi
     ;;
-  *)
-    ;;
+  *) ;;
 esac
 
 exit 0

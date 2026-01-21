@@ -18,6 +18,8 @@
 
 set -eu
 
+VERBOSE=0
+
 usage() {
   sed -n '1,200p' "$0" | sed -n '1,80p'
   echo
@@ -32,13 +34,18 @@ PRIVKEY=""
 PUBLIC_KEY=""
 OVERLAY_BOOT=""
 DEPLOY_TARGET=""
+OUT_DIR=""
+COPY_IMAGE=0
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --image) IMAGE="$2"; shift 2;;
     --private-key) PRIVKEY="$2"; shift 2;;
     --public-key) PUBLIC_KEY="$2"; shift 2;;
-    --overlay) OVERLAY_BOOT="$2"; shift 2;;
+  --overlay) OVERLAY_BOOT="$2"; shift 2;;
+  --out-dir) OUT_DIR="$2"; shift 2;;
+  --copy-image) COPY_IMAGE=1; shift 1;;
+    --verbose|-v) VERBOSE=1; shift 1;;
     --deploy) DEPLOY_TARGET="$2"; shift 2;;
     --help|-h) usage;;
     *) echo "Unknown arg: $1"; usage;;
@@ -53,6 +60,15 @@ fi
 if [ ! -f "$IMAGE" ]; then
   echo "Error: image not found: $IMAGE" >&2
   exit 2
+fi
+
+if [ "$VERBOSE" -eq 1 ]; then
+  echo "[debug] IMAGE=$IMAGE"
+  echo "[debug] PRIVKEY=${PRIVKEY:-<none>}"
+  echo "[debug] PUBLIC_KEY=${PUBLIC_KEY:-<none>}"
+  echo "[debug] OVERLAY_BOOT=${OVERLAY_BOOT:-<none>}"
+  echo "[debug] OUT_DIR=${OUT_DIR:-<none>}"
+  echo "[debug] DEPLOY_TARGET=${DEPLOY_TARGET:-<none>}"
 fi
 
 command -v sha256sum >/dev/null 2>&1 || { echo "sha256sum not found" >&2; exit 3; }
@@ -75,11 +91,24 @@ if [ -n "$PRIVKEY" ]; then
   openssl dgst -sha256 -sign "$PRIVKEY" -out "$SIGFILE" "$CHECKFILE"
 fi
 
-if [ -n "$OVERLAY_BOOT" ]; then
+  if [ -n "$OVERLAY_BOOT" ]; then
   # create overlay boot dir if missing
   mkdir -p "$OVERLAY_BOOT" || { echo "cannot create overlay target: $OVERLAY_BOOT" >&2; exit 6; }
   echo "Copying artifacts into overlay: $OVERLAY_BOOT"
-  cp -a "$IMAGE" "$OVERLAY_BOOT/$BASE" 
+  if [ "$VERBOSE" -eq 1 ]; then
+    echo "[debug] will copy image?: $COPY_IMAGE"
+    echo "[debug] will copy: $CHECKFILE -> $OVERLAY_BOOT/$BASE.sha256"
+    if [ -f "$SIGFILE" ]; then
+      echo "[debug] will copy: $SIGFILE -> $OVERLAY_BOOT/$BASE.sha256.sig"
+    else
+      echo "[debug] sigfile not present: $SIGFILE"
+    fi
+  fi
+  if [ "$COPY_IMAGE" -eq 1 ]; then
+    cp -a "$IMAGE" "$OVERLAY_BOOT/$BASE"
+  else
+    [ "$VERBOSE" -eq 1 ] && echo "[info] skipping copy of image file into overlay (use --copy-image to enable)"
+  fi
   cp -a "$CHECKFILE" "$OVERLAY_BOOT/$BASE.sha256"
   if [ -f "$SIGFILE" ]; then
     cp -a "$SIGFILE" "$OVERLAY_BOOT/$BASE.sha256.sig"
@@ -92,18 +121,38 @@ if [ -n "$OVERLAY_BOOT" ]; then
       cp -a "$PUBKEY" "$(dirname "$OVERLAY_BOOT")/etc/keys/public.pem"
       echo "Copied public key to overlay: $(dirname "$OVERLAY_BOOT")/etc/keys/public.pem"
     else
-      echo "Note: public key not found at $PUBKEY. Place public.pem in overlay at etc/keys/public.pem if you want automatic verification on device." 
+      if [ "$VERBOSE" -eq 1 ]; then
+        echo "[debug] Note: public key not found at $PUBKEY. You provided --private-key but no matching public file found." 
+      else
+        echo "Note: public key not found at $PUBKEY. Place public.pem in overlay at etc/keys/public.pem if you want automatic verification on device." 
+      fi
     fi
   fi
   # If explicit public key provided, copy it into overlay etc/keys
   if [ -n "$PUBLIC_KEY" ]; then
     if [ -f "$PUBLIC_KEY" ]; then
       mkdir -p "$(dirname "$OVERLAY_BOOT")/etc/keys"
+      if [ "$VERBOSE" -eq 1 ]; then
+        echo "[debug] copy explicit public key '$PUBLIC_KEY' -> '$(dirname "$OVERLAY_BOOT")/etc/keys/public.pem'"
+      fi
       cp -a "$PUBLIC_KEY" "$(dirname "$OVERLAY_BOOT")/etc/keys/public.pem"
       echo "Copied explicit public key to overlay: $(dirname "$OVERLAY_BOOT")/etc/keys/public.pem"
     else
       echo "Public key not found at $PUBLIC_KEY" >&2
     fi
+  fi
+fi
+
+if [ -n "$OUT_DIR" ]; then
+  echo "Also copying artifacts into $OUT_DIR"
+  mkdir -p "$OUT_DIR"
+  cp -a "$IMAGE" "$OUT_DIR/$(basename "$IMAGE")"
+  cp -a "$CHECKFILE" "$OUT_DIR/$(basename "$CHECKFILE")"
+  if [ -f "$SIGFILE" ]; then
+    cp -a "$SIGFILE" "$OUT_DIR/$(basename "$SIGFILE")"
+  fi
+  if [ -n "$PUBLIC_KEY" ] && [ -f "$PUBLIC_KEY" ]; then
+    cp -a "$PUBLIC_KEY" "$OUT_DIR/public.pem"
   fi
 fi
 

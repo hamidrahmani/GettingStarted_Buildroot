@@ -22,3 +22,22 @@ Copy the following files into the board overlay (or directly on the board):
   - fitImage.sha256.sig -> /boot/fitImage.sha256.sig
 
 The boot-time verifier will check the signature and then compare the checksum. Logs are written to /var/log/boot_verify.log.
+
+
+-----------------------------
+# sign the image 
+## Build, sign the generated boot artifact, then rebuild to bake artifacts into the image
+### use case: you want overlays/.../etc/keys/public.pem and the signed checksum to be present inside the final rootfs/boot produced by make.
+#### step
+teps:
+1- Build normally to produce the kernel/boot artifacts:
+From your buildroot folder (repo root if you run make there):
+--> make 
+
+2- Generate keys (if needed) and create signature + copy artifacts into the overlay so Buildroot will include them:
+Example (sign the FIT image and copy artifacts into overlay boot and etc/keys):
+# create keys (if missing) and produce checksum+sig, copy into overlay
+../scripts/make_keys_and_sign.sh --image output/images/sdcard.img --overlay ../overlays/beaglebone/rootfs-overlay/boot
+
+3- Rebuild so the overlay contents (the checksum, sig and etc/keys/public.pem) are included in the newly-built image:
+-->make
