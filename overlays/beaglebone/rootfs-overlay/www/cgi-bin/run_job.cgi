@@ -103,12 +103,61 @@ if [ -z "$GROUP" ] || [ -z "$ID" ]; then
   exit 0
 fi
 
+# ---------------- User-based restrictions ----------------
+# AUTH_USER already determined above; ensure it's set consistently
+AUTH_USER="${REMOTE_USER:-}${HTTP_REMOTE_USER:-}"
+if [ -z "$AUTH_USER" ] && [ -n "${HTTP_AUTHORIZATION:-}" ]; then
+  case "${HTTP_AUTHORIZATION}" in
+    Basic*)
+      b64=$(printf '%s' "${HTTP_AUTHORIZATION#Basic }" | tr -d '\r\n' | sed 's/^[[:space:]]*//')
+      if command -v base64 >/dev/null 2>&1; then
+        creds=$(printf '%s' "$b64" | base64 -d 2>/dev/null || true)
+      else
+        creds=""
+      fi
+      AUTH_USER=$(printf '%s' "$creds" | sed 's/:.*$//')
+      ;;
+  esac
+fi
+
+# Root .allow now lists users (maintainer, homer, etc.). If present, require
+# the authenticated user to be in that file.
+if [ -r "$WHITELIST/.allow" ] && ! allow_has "$WHITELIST/.allow" "$AUTH_USER"; then
+  hdr "403 Forbidden"
+  json '{"error":"user_not_allowed"}'
+  log "$GROUP" "$ID" "user_not_allowed:${AUTH_USER:-}"
+  exit 0
+fi
+
+# Privilege rules:
+# - maintainer: full access (skip group/.groups checks)
+# - homer: only allowed to run 90-log-diag/dmesg_recent
+# - others: denied (already filtered by root .allow)
+SKIP_GROUP_CHECK=0
+if [ "${AUTH_USER:-}" = "maintainer" ]; then
+  SKIP_GROUP_CHECK=1
+elif [ "${AUTH_USER:-}" = "homer" ]; then
+  if [ "$GROUP/$ID" != "90-log-diag/dmesg_recent" ]; then
+    hdr "403 Forbidden"
+    json '{"error":"forbidden_for_user"}'
+    log "$GROUP" "$ID" "forbidden_for_user:${AUTH_USER:-}"
+    exit 0
+  fi
+else
+  # any other user is not allowed (root .allow should have filtered these out)
+  hdr "403 Forbidden"
+  json '{"error":"user_not_allowed"}'
+  log "$GROUP" "$ID" "user_not_allowed:${AUTH_USER:-}"
+  exit 0
+fi
+
 # ---------------- .allow checks ----------------
-# Root .allow (optional)
-if [ -r "$WHITELIST/.allow" ] && ! allow_has "$WHITELIST/.allow" "$GROUP"; then
+# Root group whitelist (optional). Groups previously lived in root .allow;
+# we've moved them to .groups so root .allow can be used for user lists.
+if [ "$SKIP_GROUP_CHECK" -ne 1 ] && [ -r "$WHITELIST/.groups" ] && ! allow_has "$WHITELIST/.groups" "$GROUP"; then
   hdr "403 Forbidden"
   json '{"error":"group_forbidden"}'
-  log "$GROUP" "$ID" 'group_forbidden (root .allow)'
+  log "$GROUP" "$ID" 'group_forbidden (root .groups)'
   exit 0
 fi
 
