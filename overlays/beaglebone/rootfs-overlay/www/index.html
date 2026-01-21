@@ -75,9 +75,15 @@
     document.getElementById('jout').textContent = `HTTP ${r.status}\n${bodyText}`;
   }
   function logout() {
-    // Navigate the browser to the logout CGI which returns 401 + WWW-Authenticate
-    // This should cause the browser to drop cached Basic auth credentials
-    window.location.href = '/api/logout.cgi';
+    // Open the logout CGI in a hidden iframe to trigger the 401 challenge
+    // (this commonly makes the browser drop cached Basic auth credentials),
+    // then redirect the top-level window back to '/'.
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = '/api/logout.cgi';
+    document.body.appendChild(iframe);
+    // Give the iframe a short time to load so the browser processes the 401.
+    setTimeout(() => { window.location.href = '/'; }, 500);
   }
   </script>
 </body>
