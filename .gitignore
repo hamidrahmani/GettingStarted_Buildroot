@@ -1,3 +1,5 @@
 *.img
 sdb
 temp
+../docs/todos
+../flash_sdcard_image.sh
