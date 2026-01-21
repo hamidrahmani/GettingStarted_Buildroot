@@ -1,18 +1,40 @@
 
 
 #!/bin/sh
+# S01banner - print a banner on system start only
+# This script prints the banner when called with 'start' (or by default)
+# and is a no-op on 'stop' so it does not run during shutdown.
 
-printf "\n"
-printf "  ###################################################\n"
-printf "  ###################################################\n"
-printf "  ###################################################\n"
-printf "  ##         Welcome to Hamid's Buildroot          ##\n"
-printf "  ###################################################\n"
-printf "  ###################################################\n"
-printf "  ###################################################\n"
-printf "\n"
-printf "    / > BBB is booting...\n"
-printf "\n"
+print_banner() {
+		printf "\n"
+		printf "  ###################################################\n"
+		printf "  ###################################################\n"
+		printf "  ###################################################\n"
+		printf "  ##         Welcome to Hamid's Buildroot          ##\n"
+		printf "  ###################################################\n"
+		printf "  ###################################################\n"
+		printf "  ###################################################\n"
+		printf "\n"
+		printf "    / > BBB is booting...\n"
+		printf "\n"
+}
+
+case "$1" in
+	start)
+		print_banner
+		;;
+	restart)
+		print_banner
+		;;
+	stop)
+		# no-op during shutdown
+		;;
+	*)
+		# default to start for compatibility with init systems that call scripts
+		# without an explicit argument.
+		print_banner
+		;;
+esac
 
 exit 0
 
