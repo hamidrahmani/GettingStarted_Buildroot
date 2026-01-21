@@ -1,0 +1,12 @@
+#!/bin/sh
+# Init script to run image verification early in boot
+
+case "$1" in
+  start)
+    /usr/local/sbin/verify_boot_image.sh || true
+    ;;
+  *)
+    ;;
+esac
+
+exit 0
