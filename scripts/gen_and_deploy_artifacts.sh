@@ -29,6 +29,7 @@ usage() {
 
 IMAGE=""
 PRIVKEY=""
+PUBLIC_KEY=""
 OVERLAY_BOOT=""
 DEPLOY_TARGET=""
 
@@ -36,6 +37,7 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     --image) IMAGE="$2"; shift 2;;
     --private-key) PRIVKEY="$2"; shift 2;;
+    --public-key) PUBLIC_KEY="$2"; shift 2;;
     --overlay) OVERLAY_BOOT="$2"; shift 2;;
     --deploy) DEPLOY_TARGET="$2"; shift 2;;
     --help|-h) usage;;
@@ -93,6 +95,16 @@ if [ -n "$OVERLAY_BOOT" ]; then
       echo "Note: public key not found at $PUBKEY. Place public.pem in overlay at etc/keys/public.pem if you want automatic verification on device." 
     fi
   fi
+  # If explicit public key provided, copy it into overlay etc/keys
+  if [ -n "$PUBLIC_KEY" ]; then
+    if [ -f "$PUBLIC_KEY" ]; then
+      mkdir -p "$(dirname "$OVERLAY_BOOT")/etc/keys"
+      cp -a "$PUBLIC_KEY" "$(dirname "$OVERLAY_BOOT")/etc/keys/public.pem"
+      echo "Copied explicit public key to overlay: $(dirname "$OVERLAY_BOOT")/etc/keys/public.pem"
+    else
+      echo "Public key not found at $PUBLIC_KEY" >&2
+    fi
+  fi
 fi
 
 if [ -n "$DEPLOY_TARGET" ]; then
@@ -102,6 +114,10 @@ if [ -n "$DEPLOY_TARGET" ]; then
   scp "$CHECKFILE" "$DEPLOY_TARGET/$(basename "$CHECKFILE")"
   if [ -f "$SIGFILE" ]; then
     scp "$SIGFILE" "$DEPLOY_TARGET/$(basename "$SIGFILE")"
+  fi
+  if [ -n "$PUBLIC_KEY" ] && [ -f "$PUBLIC_KEY" ]; then
+    scp "$PUBLIC_KEY" "$DEPLOY_TARGET/$(dirname "$DEPLOY_TARGET")/etc/keys/public.pem" || true
+    echo "Deployed public key to target (if path writable)."
   fi
   echo "Deployed. You may need to run 'sync' or restart services on the device." 
 fi
