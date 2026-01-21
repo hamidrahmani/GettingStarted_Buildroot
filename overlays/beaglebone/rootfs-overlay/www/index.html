@@ -39,6 +39,7 @@
       <option>90-log-diag/dmesg_recent</option>
     </select>
     <button onclick="runJob()">Run</button>
+    <button onclick="logout()">Logout</button>
     <pre id="jout"></pre>
   </section>
 
@@ -72,6 +73,11 @@
     let bodyText;
     try { bodyText = await r.text(); } catch(e) { bodyText = String(e); }
     document.getElementById('jout').textContent = `HTTP ${r.status}\n${bodyText}`;
+  }
+  function logout() {
+    // Navigate the browser to the logout CGI which returns 401 + WWW-Authenticate
+    // This should cause the browser to drop cached Basic auth credentials
+    window.location.href = '/api/logout.cgi';
   }
   </script>
 </body>
