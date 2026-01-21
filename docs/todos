@@ -1,3 +1,3 @@
 # TODO's
 ## security hints
-- define a non-root user like "wwww-data" for webserver. it allows to assign the web service a non-privillaged user.
+- define a non-root user like "wwww-data" for webserver. it allows to assign the web service a non-privillaged user. 
