@@ -6,8 +6,14 @@
 
 echo "[S40wifi] Bringing up wlan0..."
 
-# Ensure interface exists and is up
-ip link set wlan0 up 2>/dev/null
+# Wait until wlan0 actually exists
+while ! ip link show wlan0 >/dev/null 2>&1; do
+    sleep 0.2
+done
+
+# Bring interface up (show errors now)
+ip link set wlan0 up
+
 
 # Kill any stale instances from previous boots
 pkill -x wpa_supplicant 2>/dev/null
