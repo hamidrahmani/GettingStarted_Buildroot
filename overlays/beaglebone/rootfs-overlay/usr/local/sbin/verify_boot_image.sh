@@ -1,12 +1,12 @@
 #!/bin/sh
-# verify_boot_image.sh – Verify /boot/sdcard.img via signed checksum.
-# - Computes sha256 of /boot/sdcard.img
-# - Compares with /boot/sdcard.img.sha256
-# - If /boot/sdcard.img.sha256.sig and /etc/keys/public.pem exist, verify signature too.
+# verify_boot_image.sh – Verify /boot/zImage via signed checksum.
+# - Computes sha256 of /boot/zImage
+# - Compares with /boot/zImage.sha256
+# - If /boot/zImage.sha256.sig and /etc/keys/public.pem exist, verify signature too.
 
 set -eu
 
-IMG="/boot/sdcard.img"
+IMG="/boot/zImage"
 CHECK="${IMG}.sha256"
 SIG="${CHECK}.sig"
 PUBKEY="/etc/keys/public.pem"

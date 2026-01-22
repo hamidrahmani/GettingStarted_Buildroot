@@ -3,3 +3,5 @@ sdb
 temp
 docs/todos
 flash_sdcard_image.sh
+overlays/beaglebone/rootfs-overlay/boot/sdcard.img.sha256
+overlays/beaglebone/rootfs-overlay/boot/sdcard.img.sha256.sig

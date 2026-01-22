@@ -1,0 +1,1 @@
+adjust post-build.sh script inside buildroot/board/beagleboard/beaglebone/ to gather the information and print the into /etc/imageVersion an buil time

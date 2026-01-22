@@ -1,5 +1,3 @@
-
-
 #!/bin/sh
 # S01banner - print a banner on system start only
 # This script prints the banner when called with 'start' (or by default)
@@ -14,8 +12,6 @@ print_banner() {
 		printf "  ###################################################\n"
 		printf "  ###################################################\n"
 		printf "  ###################################################\n"
-		printf "\n"
-		printf "    / > BBB is booting...\n"
 		printf "\n"
 }
 

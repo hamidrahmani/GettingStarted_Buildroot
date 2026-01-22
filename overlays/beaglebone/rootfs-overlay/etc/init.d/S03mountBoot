@@ -1,0 +1,73 @@
+#!/bin/sh
+# S03mount-boot
+# Mount the FAT boot partition early and ensure zImage checksum/signature
+# artifacts (placed via rootfs overlay) are restored into the mounted /boot.
+#
+# Flow:
+#  1) Stash any /boot/*.sha256* that exist BEFORE the mount (from rootfs overlay)
+#  2) Mount /dev/mmcblk0p1 (fallback: /dev/mmcblk1p1) at /boot (read-only by default)
+#  3) If stashed artifacts exist and are missing on the mounted /boot, copy them back
+
+START=03
+ART_STASH_DIR="/run/boot-artifacts-stash"
+ART_NAMES="zImage.sha256 zImage.sha256.sig"
+
+log() { echo "[boot-mount] $*" ; }
+
+stash_overlay_artifacts() {
+    # Save any overlay-provided artifacts before /boot is mounted and hides them
+    mkdir -p "$ART_STASH_DIR"
+    local found=0
+    for f in $ART_NAMES; do
+        if [ -f "/boot/$f" ]; then
+            cp -a "/boot/$f" "$ART_STASH_DIR/$f" && found=1
+        fi
+    done
+    [ "$found" -eq 1 ] && log "Stashed overlay artifacts to $ART_STASH_DIR"
+}
+
+restore_artifacts_if_missing() {
+    # After mount: copy back any stashed files if they are not present on the FAT /boot
+    local restored=0
+    for f in $ART_NAMES; do
+        if [ -f "$ART_STASH_DIR/$f" ] && [ ! -f "/boot/$f" ]; then
+            # Need rw to copy; remount temporarily if mounted ro
+            if mount | grep -q " on /boot " && mount | grep -q " on /boot " | grep -q "(ro," 2>/dev/null; then
+                mount -o remount,rw /boot 2>/dev/null || true
+            fi
+            cp -a "$ART_STASH_DIR/$f" "/boot/$f" && restored=1
+        fi
+    done
+    # Remount back to ro for safety if we changed it
+    if [ "$restored" -eq 1 ]; then
+        sync
+        mount -o remount,ro /boot 2>/dev/null || true
+        log "Restored checksum/signature artifacts into mounted /boot"
+    fi
+    # Cleanup
+    rm -rf "$ART_STASH_DIR" 2>/dev/null || true
+}
+
+mount_boot_partition() {
+    # Try mmcblk0p1 then mmcblk1p1
+    if [ -b /dev/mmcblk0p1 ]; then
+        mountpoint -q /boot || mount -t vfat -o ro,umask=022 /dev/mmcblk0p1 /boot && {
+            log "Mounted /dev/mmcblk0p1 at /boot"
+            return 0
+        }
+    fi
+    if [ -b /dev/mmcblk1p1 ]; then
+        mountpoint -q /boot || mount -t vfat -o ro,umask=022 /dev/mmcblk1p1 /boot && {
+            log "Mounted /dev/mmcblk1p1 at /boot"
+            return 0
+        }
+    fi
+    log "WARNING: No boot partition found to mount!"
+    return 1
+}
+
+start() {
+    log "Mounting FAT boot partition..."
+    # 1) Stash overlay-provided artifacts present before mount
+    stash_overlay_artifacts
+    # 2) Mount boot

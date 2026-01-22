@@ -11,7 +11,7 @@ case "$1" in
       echo "[verify] OK"
     else
       rc=$?
-      echo "[verify] FAILED (rc=$rc)"
+      echo "[verify] XXXXXXXXXXXXXXX FAILED XXXXXXXXXXXXXXX (rc=$rc)"
       if [ "$ENFORCE" -eq 1 ]; then
         echo "[verify] Enforcement ON. Rebooting in 5s..."
         sleep 5
