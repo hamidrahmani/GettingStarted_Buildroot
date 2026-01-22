@@ -1,10 +1,9 @@
-
 #!/bin/sh
-# /etc/init.d/S40wifi
+# /etc/init.d/S42wifi
 # Start WiFi and get a DHCP lease exactly once (no duplicate routes)
 # Short-Description: Bring up wlan0 via wpa_supplicant + udhcpc
 
-echo "[S40wifi] Bringing up wlan0..."
+echo "[S42wifi] Bringing up wlan0..."
 
 # Wait until wlan0 actually exists
 while ! ip link show wlan0 >/dev/null 2>&1; do

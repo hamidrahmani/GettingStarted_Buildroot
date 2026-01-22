@@ -1,4 +1,3 @@
-###################### this file is located in overlay folder #####################
 #!/bin/sh
 
 CONFIG="/etc/lighttpd/lighttpd.conf"
@@ -19,4 +18,4 @@ case "$1" in
     $DAEMON -f $CONFIG
     ;;
 esac
-###########################################
+

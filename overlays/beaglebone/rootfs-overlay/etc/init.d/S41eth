@@ -1,4 +1,3 @@
-
 #!/bin/sh
 # Bring eth0 up via udhcpc exactly once (no duplicate routes) 
 # Short-Description: Ethernet bringup (udhcpc on eth0) 
