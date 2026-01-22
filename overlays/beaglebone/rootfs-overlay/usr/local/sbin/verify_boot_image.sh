@@ -1,5 +1,5 @@
 #!/bin/sh
-# verify_boot_image.sh – Verify /boot/zImage via signed checksum.
+# verify_boot_image.sh : Verify /boot/zImage via signed checksum.
 # - Computes sha256 of /boot/zImage
 # - Compares with /boot/zImage.sha256
 # - If /boot/zImage.sha256.sig and /etc/keys/public.pem exist, verify signature too.
@@ -76,7 +76,7 @@ if [ -f "$SIG" ] && [ -f "$PUBKEY" ]; then
       log "verify_mismatch_signed target=$(basename "$IMG") computed=$computed expected=$expected"
       exit 2
     fi
-  } else
+   else
     log "sig_verify_failed target=$(basename "$IMG")"
     exit 3
   fi
